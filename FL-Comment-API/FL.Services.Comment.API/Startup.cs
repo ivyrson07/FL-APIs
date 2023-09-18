@@ -1,4 +1,5 @@
-﻿using FL.Services.Comments.Managers;
+﻿using EasyNetQ;
+using FL.Services.Comments.Managers;
 using Microsoft.AspNetCore.Builder;
 
 namespace FL.Services.Comments.API
@@ -27,6 +28,8 @@ namespace FL.Services.Comments.API
             });
 
             services
+                .AddScoped(sp => RabbitHutch.CreateBus("host=localhost"))
+
                 .AddScoped<ICommentManager, CommentManager>();
 
             // Configure Swagger

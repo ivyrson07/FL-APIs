@@ -18,9 +18,16 @@ namespace FL.Services.Comments.Managers
 
     public class CommentManager : ICommentManager
     {
-        public Task<Comment> GetAsync(Guid id)
+        private readonly IBus _bus;
+
+        public CommentManager(IBus bus)
         {
-            return Task.FromResult(new Comment
+            _bus = bus;
+        }
+
+        public async Task<Comment> GetAsync(Guid id)
+        {
+            return await Task.FromResult(new Comment
             {
                 Id = id,
                 Description = "",
@@ -29,16 +36,20 @@ namespace FL.Services.Comments.Managers
             });
         }
 
-        public Task<Comment> CreateAsync(Comment comment)
+        public async Task<Comment> CreateAsync(Comment comment)
         {
             // save to database here, beep, beep, beep, ...
 
             // testing pubsub
             try
             {
-                using (var bus = RabbitHutch.CreateBus("host=localhost"))
+                if (comment.PostId == Guid.Empty)
                 {
-                    bus.PubSub.PublishAsync(comment);
+                    await _bus.PubSub.PublishAsync(comment, "test.privatecomment");
+                }
+                else
+                {
+                    await _bus.PubSub.PublishAsync(comment, "test.publiccomment");
                 }
             }
             catch (Exception ex)
@@ -47,7 +58,7 @@ namespace FL.Services.Comments.Managers
                 Console.WriteLine($"EasyNetQ error : {ex.StackTrace}");
             }
 
-            return Task.FromResult(new Comment
+            return await Task.FromResult(new Comment
             {
                 Id = Guid.NewGuid(),
                 Description = comment.Description,
