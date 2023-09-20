@@ -1,11 +1,5 @@
 ﻿using EasyNetQ;
 using FL.Common.Models;
-using FL.Services.Comments.Managers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FL.Services.Comments.Managers
 {

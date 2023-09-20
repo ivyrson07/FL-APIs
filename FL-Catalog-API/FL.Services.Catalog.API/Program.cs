@@ -1,5 +1,5 @@
 using EasyNetQ;
-using FL.Services.Comments.Managers;
+using FL.Services.Catalog.Managers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +12,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services
     .AddScoped(sp => RabbitHutch.CreateBus("host=localhost"))
-
-    .AddScoped<ICommentManager, CommentManager>();
+    
+    .AddScoped<ICatalogManager, CatalogManager>();
 
 var app = builder.Build();
 
